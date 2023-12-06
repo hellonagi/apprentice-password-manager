@@ -15,6 +15,26 @@ function add_password (){
     echo "パスワードの追加は成功しました。"
 }
 
+function get_password (){
+    echo "サービス名を入力してください："
+    read input_service
+
+    accounts=$(grep "^${input_service}:" accounts.txt)
+
+    if [ -n "$accounts" ]; then
+        echo "サービス名：${input_service}"
+        for account in $accounts
+        do
+            user=$(echo "$account" | cut -d':' -f2)
+            password=$(echo "$account" | cut -d':' -f3)
+            echo "ユーザー名：${user}"
+            echo "パスワード：${password}"
+        done
+    else
+        echo "そのサービスは登録されていません。"
+    fi
+}
+
 echo "パスワードマネージャーへようこそ！"
 
 while true
@@ -27,8 +47,7 @@ do
             add_password
             ;;
         "Get Password" )
-            # TODO: get_passwordの実装
-            echo "Get Password"
+            get_password
             ;;
         "Exit" )
             echo "Thank you!"
