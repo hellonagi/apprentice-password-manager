@@ -23,13 +23,13 @@ function get_password (){
 
     if [ -n "$accounts" ]; then
         echo "サービス名：${input_service}"
-        for account in $accounts
+        while read account;
         do
             user=$(echo "$account" | cut -d':' -f2)
             password=$(echo "$account" | cut -d':' -f3)
             echo "ユーザー名：${user}"
             echo "パスワード：${password}"
-        done
+        done <<< "${accounts}"
     else
         echo "そのサービスは登録されていません。"
     fi
