@@ -1,5 +1,20 @@
 #!/usr/bin/bash
 
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' INT TERM EXIT
+
+function encrypt_file(){
+    gpg --batch --yes --quiet --symmetric --cipher-algo AES256 --output accounts.gpg "$tmp"
+}
+
+function decrypt_file(){
+    if [ -f "accounts.gpg" ]; then
+        gpg --batch --yes --quiet --output "$tmp" --decrypt accounts.gpg
+    else
+        : > "$tmp"
+    fi
+}
+
 function add_password (){
     echo "サービス名を入力してください："
     read service
@@ -10,7 +25,9 @@ function add_password (){
     echo "パスワードを入力してください："
     read -s password
 
-    echo "${service}:${username}:${password}" >> accounts.txt
+    decrypt_file
+    echo "${service}:${username}:${password}" >> "$tmp"
+    encrypt_file
 
     echo "パスワードの追加は成功しました。"
 }
@@ -19,7 +36,8 @@ function get_password (){
     echo "サービス名を入力してください："
     read input_service
 
-    accounts=$(grep "^${input_service}:" accounts.txt)
+    decrypt_file
+    accounts=$(grep "^${input_service}:" "$tmp")
 
     if [ -n "$accounts" ]; then
         echo "サービス名：${input_service}"
