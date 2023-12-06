@@ -11,6 +11,8 @@ function add_password (){
     read -s password
 
     echo "${service}:${username}:${password}" >> accounts.txt
+
+    echo "パスワードの追加は成功しました。"
 }
 
 echo "パスワードマネージャーへようこそ！"
@@ -23,7 +25,6 @@ do
     case $choice in
         "Add Password" )
             add_password
-            echo "パスワードの追加は成功しました。"
             ;;
         "Get Password" )
             # TODO: get_passwordの実装
